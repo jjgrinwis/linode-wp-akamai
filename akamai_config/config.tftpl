@@ -318,7 +318,11 @@
                 {
                     "name": "httpStrictTransportSecurity",
                     "options": {
-                        "enable": false
+						"enable": true,
+						"maxAge": "ONE_DAY",
+						"includeSubDomains": true,
+						"preload": true,"redirect": true,
+						"redirectStatusCode": 301
                     }
                 }
             ],

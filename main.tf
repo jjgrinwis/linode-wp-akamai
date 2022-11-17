@@ -32,6 +32,7 @@ data "linode_stackscript" "my_stackscript" {
 
 # all these secrets should be stored in a vault
 # something for our next project, password can be shown via 'terraform output -json'
+# but all credentials should move to Hashicorp Vault in a next release.
 resource "linode_instance" "my_wp_instance" {
   image           = data.linode_stackscript.my_stackscript.images[0]
   label           = var.label
