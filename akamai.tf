@@ -133,7 +133,7 @@ module "edgedns_cname" {
 }
 
 # last but not least add this hostname to a pre-configured security policy
-module "enable_security" {
+/* module "enable_security" {
   source = "../modules/services/security_policy"
 
   # use our pre-configured configuration & policy
@@ -149,4 +149,4 @@ module "enable_security" {
   depends_on = [
     akamai_property_activation.aka_staging
   ]
-}
+} */
