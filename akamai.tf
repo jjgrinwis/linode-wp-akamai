@@ -45,7 +45,8 @@ resource "akamai_cp_code" "cp_code" {
 # as the config will be pretty static, use template file
 # we're going to use all required rules in this tf file.
 # create our edge hostname resource
-resource "akamai_edge_hostname" "aka_edge" {
+/* resource "akamai_edge_hostname" "aka_edge" {
+
   product_id  = resource.akamai_cp_code.cp_code.product_id
   contract_id = data.akamai_contract.contract.id
   group_id    = data.akamai_contract.contract.group_id
@@ -53,7 +54,7 @@ resource "akamai_edge_hostname" "aka_edge" {
 
   # edgehostname based on hostname + networkf(FF/ESSL)
   edge_hostname = "${var.hostname}.${var.domain_suffix}"
-}
+} */
 
 resource "akamai_property" "aka_property" {
   name        = var.hostname
@@ -64,7 +65,8 @@ resource "akamai_property" "aka_property" {
   # our pretty static hostname configuration so a simple 1:1 between front-end and back-end
   hostnames {
     cname_from             = var.hostname
-    cname_to               = resource.akamai_edge_hostname.aka_edge.edge_hostname
+    cname_to =  "${var.hostname}.${var.domain_suffix}"
+    #cname_to               = resource.akamai_edge_hostname.aka_edge.edge_hostname
     cert_provisioning_type = "DEFAULT"
   }
 
@@ -118,7 +120,8 @@ module "edgedns_cname" {
 
   # we're going to replace our edgehostname with -staging.net
   # so edgekey.net or edgesuite.net because -staging.net
-  edge_hostname = replace(resource.akamai_edge_hostname.aka_edge.edge_hostname, "/\\.net$/", "-staging.net")
+  # edge_hostname = replace(resource.akamai_edge_hostname.aka_edge.edge_hostname, "/\\.net$/", "-staging.net")
+  edge_hostname =  replace("${var.hostname}.${var.domain_suffix}", "/\\.net$/", "-staging.net")
 
   # we're now able to use depends_on with a module by making this explicit reference in our main module 
   providers = {
