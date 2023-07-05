@@ -10,6 +10,6 @@ output "hostname" {
 
 output "wp_password" {
   description = "Wordpress admin password"
-  value       = resource.random_password.wp_admin_password.result
+  value       = resource.random_password.linode_root_password
   sensitive   = true
 }

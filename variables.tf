@@ -9,6 +9,27 @@ variable "token" {
   type        = string
 }
 
+# akamai .edgerc variables
+variable "akamai_access_token" {
+  description = "The akamai API access token to use"
+  type        = string
+}
+
+variable "akamai_client_token" {
+  description = "The Akamai API client token to use"
+  type        = string
+}
+
+variable "akamai_client_secret" {
+  description = "The Akamai API client secretto use"
+  type        = string
+}
+
+variable "akamai_host" {
+  description = "The API host to use"
+  type        = string
+}
+
 # just an example to restrict the region to deploy your instance in
 # All available regions can be found here: https://api.linode.com/v4/regions
 variable "region" {
