@@ -14,11 +14,6 @@ resource "random_password" "linode_root_password" {
   special = true
 }
 
-resource "random_password" "wp_db_password" {
-  length  = 32
-  special = true
-}
-
 # had some issues so no special characters for now
 resource "random_password" "wp_admin_password" {
   length  = 32
@@ -45,9 +40,11 @@ resource "linode_instance" "my_wp_instance" {
   # all possible vars can be checked via GET https://api.linode.com/v4/linode/stackscripts/401697
   stackscript_data = {
     "soa_email_address" = "john@grinwis.com"
-    "wp_admin"          = "admin"
-    "wp_password"       = resource.random_password.wp_admin_password.result
-    "dbroot_password"   = resource.random_password.wp_db_password.result
-    "db_password"       = resource.random_password.wp_db_password.result
+    "webserver_stack"   = "LAMP"
+    "site_title"        = var.site_title
+    "wp_admin_user"     = "admin"
+    "wp_db_user"        = "db_user"
+    "wp_db_name"        = "wordpress"
+    "password"          = resource.random_password.wp_admin_password.result
   }
 }

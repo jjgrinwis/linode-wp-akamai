@@ -3,18 +3,16 @@
 # EdgeDNS used to create the CNAME records for the SBD DV certs.
 
 # for cloud usage these vars have been defined in terraform cloud as a set
-# Configure the Akamai Terraform Provider to use betajam credentials
-
-
+# Configure the Akamai Terraform Provider to use betajam credentials via .edgerc or TF_VAR environment vars.
 provider "akamai" {
-  config {
+  /* config {
     access_token = var.akamai_access_token
     host = var.akamai_host
     client_token = var.akamai_client_token
     client_secret = var.akamai_client_secret
-  }
-  #edgerc         = "~/.edgerc"
-  #config_section = "betajam"
+  } */
+  edgerc         = "~/.edgerc"
+  config_section = "betajam"
 }
 
 # just use group_name to lookup our contract_id and group_id
@@ -64,6 +62,12 @@ resource "akamai_cp_code" "cp_code" {
   edge_hostname = "${var.hostname}.${var.domain_suffix}"
 } */
 
+resource "time_sleep" "wait_30_seconds" {
+  depends_on = [resource.linode_instance.my_wp_instance]
+
+  create_duration = "30s"
+}
+
 resource "akamai_property" "aka_property" {
   name        = var.hostname
   contract_id = data.akamai_contract.contract.id
@@ -72,8 +76,8 @@ resource "akamai_property" "aka_property" {
 
   # our pretty static hostname configuration so a simple 1:1 between front-end and back-end
   hostnames {
-    cname_from             = var.hostname
-    cname_to =  "${var.hostname}.${var.domain_suffix}"
+    cname_from = var.hostname
+    cname_to   = "${var.hostname}.${var.domain_suffix}"
     #cname_to               = resource.akamai_edge_hostname.aka_edge.edge_hostname
     cert_provisioning_type = "DEFAULT"
   }
@@ -82,6 +86,11 @@ resource "akamai_property" "aka_property" {
   # we could use the akamai_template but trying standard templatefile() for a change.
   # we might want to add cpcode in here which is statically configured now
   rules = templatefile("akamai_config/config.tftpl", { origin_hostname = local.origin_hostname, cp_code_id = local.cp_code_id, cp_code_name = var.cpcode })
+
+  # we need to wait a bit as delivery will verify if origin is already active
+  # if still being build HTTPs won't work so activation of property will fail.
+  # in a next version me might want to try the provioner option
+  depends_on = [time_sleep.wait_30_seconds]
 }
 
 # let's activate this property on staging
@@ -92,6 +101,7 @@ resource "akamai_property_activation" "aka_staging" {
   version     = resource.akamai_property.aka_property.latest_version
   network     = "STAGING"
   note        = "Action triggered by Terraform."
+  auto_acknowledge_rule_warnings = true
 }
 
 # if you your DNS provider has a Terraform module just use it here to create the CNAME records
@@ -129,7 +139,7 @@ module "edgedns_cname" {
   # we're going to replace our edgehostname with -staging.net
   # so edgekey.net or edgesuite.net because -staging.net
   # edge_hostname = replace(resource.akamai_edge_hostname.aka_edge.edge_hostname, "/\\.net$/", "-staging.net")
-  edge_hostname =  replace("${var.hostname}.${var.domain_suffix}", "/\\.net$/", "-staging.net")
+  edge_hostname = replace("${var.hostname}.${var.domain_suffix}", "/\\.net$/", "-staging.net")
 
   # we're now able to use depends_on with a module by making this explicit reference in our main module 
   providers = {

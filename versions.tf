@@ -6,8 +6,8 @@ terraform {
       #version = "1.16.0"
     }
     akamai = {
-      source = "akamai/akamai"
-      version = "5.0.0"
+      source  = "akamai/akamai"
+      #version = "5.2.0"
     }
   }
 }

@@ -28,4 +28,5 @@ security_configuration = "WAF Security File"
 # security policy to attach this property to. Security policy should be part of security config var.security_configuration
 security_policy = "Monitoring Only Security Policy"
 
-label = "triple"
+# Linode instance label
+label = "Wordpress-Akamai"

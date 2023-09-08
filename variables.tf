@@ -10,7 +10,8 @@ variable "token" {
 }
 
 # akamai .edgerc variables
-variable "akamai_access_token" {
+# use 'export TF_VAR_<var>='xxx' to set your credentials
+/* variable "akamai_access_token" {
   description = "The akamai API access token to use"
   type        = string
 }
@@ -21,14 +22,14 @@ variable "akamai_client_token" {
 }
 
 variable "akamai_client_secret" {
-  description = "The Akamai API client secretto use"
+  description = "The Akamai API client secret to use"
   type        = string
 }
 
 variable "akamai_host" {
   description = "The API host to use"
   type        = string
-}
+} */
 
 # just an example to restrict the region to deploy your instance in
 # All available regions can be found here: https://api.linode.com/v4/regions
@@ -36,7 +37,7 @@ variable "region" {
   description = "The region to deploy this image"
   type        = string
   validation {
-    condition     = contains(["eu-west", "eu-central"], var.region)
+    condition     = contains(["eu-west", "eu-central", "fr-par", "se-sto"], var.region)
     error_message = "A valid region should be selected."
   }
   default = "eu-west"
@@ -114,4 +115,10 @@ variable "security_configuration" {
 variable "security_policy" {
   description = "The active security policy the hostnames should be attached to."
   type        = string
+}
+
+variable "site_title" {
+  description = "The Title of your wordpress site"
+  type        = string
+  default     = "Hello World!"
 }
