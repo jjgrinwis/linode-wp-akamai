@@ -78,7 +78,6 @@ resource "akamai_property" "aka_property" {
   hostnames {
     cname_from = var.hostname
     cname_to   = "${var.hostname}.${var.domain_suffix}"
-    #cname_to               = resource.akamai_edge_hostname.aka_edge.edge_hostname
     cert_provisioning_type = "DEFAULT"
   }
 

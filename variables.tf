@@ -37,10 +37,10 @@ variable "region" {
   description = "The region to deploy this image"
   type        = string
   validation {
-    condition     = contains(["eu-west", "eu-central", "fr-par", "se-sto"], var.region)
+    condition     = contains(["eu-west", "eu-central", "fr-par", "se-sto", "nl-ams"], var.region)
     error_message = "A valid region should be selected."
   }
-  default = "eu-west"
+  default = "nl-ams"
 }
 
 variable "type" {
