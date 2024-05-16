@@ -45,6 +45,7 @@ resource "linode_instance" "my_wp_instance" {
     "wp_admin_user"     = "admin"
     "wp_db_user"        = "db_user"
     "wp_db_name"        = "wordpress"
-    "password"          = resource.random_password.wp_admin_password.result
+    "user_name"         = "admin"
+    #"password"          = resource.random_password.wp_admin_password.result
   }
 }
