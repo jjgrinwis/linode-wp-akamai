@@ -36,6 +36,9 @@ locals {
   # our dynamically created linode hostname, domain is always the same so no var.
   # linode will automatically request a DV certificate for the origin.
   origin_hostname = format("%s.ip.linodeusercontent.com", join("-", split(".", resource.linode_instance.my_wp_instance.ip_address)))
+
+  # secure network or not
+  secure_network = var.domain_suffix == "edgekey.net" ? true : false
 }
 
 
@@ -76,15 +79,15 @@ resource "akamai_property" "aka_property" {
 
   # our pretty static hostname configuration so a simple 1:1 between front-end and back-end
   hostnames {
-    cname_from = var.hostname
-    cname_to   = "${var.hostname}.${var.domain_suffix}"
+    cname_from             = var.hostname
+    cname_to               = "${var.hostname}.${var.domain_suffix}"
     cert_provisioning_type = "DEFAULT"
   }
 
   # our pretty static rules file. Only dynamic part is the origin name
   # we could use the akamai_template but trying standard templatefile() for a change.
   # we might want to add cpcode in here which is statically configured now
-  rules = templatefile("akamai_config/config.tftpl", { origin_hostname = local.origin_hostname, cp_code_id = local.cp_code_id, cp_code_name = var.cpcode })
+  rules = templatefile("akamai_config/config.tftpl", { origin_hostname = local.origin_hostname, cp_code_id = local.cp_code_id, cp_code_name = var.cpcode, secure_network = local.secure_network })
 
   # we need to wait a bit as delivery will verify if origin is already active
   # if still being build HTTPs won't work so activation of property will fail.
@@ -95,11 +98,11 @@ resource "akamai_property" "aka_property" {
 # let's activate this property on staging
 # staging will always use latest version but when useing on production a version number should be provided.
 resource "akamai_property_activation" "aka_staging" {
-  property_id = resource.akamai_property.aka_property.id
-  contact     = [var.email]
-  version     = resource.akamai_property.aka_property.latest_version
-  network     = "STAGING"
-  note        = "Action triggered by Terraform."
+  property_id                    = resource.akamai_property.aka_property.id
+  contact                        = [var.email]
+  version                        = resource.akamai_property.aka_property.latest_version
+  network                        = "STAGING"
+  note                           = "Action triggered by Terraform."
   auto_acknowledge_rule_warnings = true
 }
 

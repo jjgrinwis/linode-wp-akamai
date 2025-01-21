@@ -13,7 +13,7 @@ group_name = "Ion Standard Beta Jam 1-3-16TWBVX"
 email = "nobody@akamai.com"
 
 # let's use FF network
-domain_suffix = "edgesuite.net"
+domain_suffix = "edgekey.net"
 
 # property name
 hostname = "wordpress.great-demo.com"
